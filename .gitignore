@@ -1,0 +1,10 @@
+# Ignore Microsoft Word documents (all case variants)
+# Match .doc and .docx files anywhere in the repository
+[dD][oO][cC]
+[dD][oO][cC][xX]
+
+# Also explicitly ignore common capitalized patterns
+*.doc
+*.DOC
+*.docx
+*.DOCX
