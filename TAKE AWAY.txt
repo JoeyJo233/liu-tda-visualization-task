@@ -1,0 +1,10 @@
+VOLUME RENDERING(compare to ray tracing) 针对内部复杂的半透明物体，计算量低效果好:
+FRONT TO BACK
+BACK TO FRONT
+一种计算的快，需要对精度进行控制
+一种慢，精度高
+
+很大的果冻Jelly，光线射到一半就熄火了
+
+
+什么时候需要渲染标量（天气预报的温度），vector（电离实验），什么时候volume rendering
