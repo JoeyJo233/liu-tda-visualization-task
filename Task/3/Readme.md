@@ -11,12 +11,12 @@ Run this project in a reproducible Conda environment using the provided `environ
 
 2. **Create the environment from `environment.yml`**:
    ```bash
-   conda env create -f environment.yml
+   conda env create -f environment.yml --name your_custom_name
    ```
 
 3. **Activate the environment**:
    ```bash
-   conda activate myenv
+   conda activate your_custom_name
    ```
 
 4. **Verify dependencies** (optional):
