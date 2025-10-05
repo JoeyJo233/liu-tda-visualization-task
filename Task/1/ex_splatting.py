@@ -14,8 +14,10 @@ nx, ny, nz = img.dimensions
 arr = img.active_scalars.reshape((nx, ny, nz), order="F")
 
 # -------- 2) 体素 -> 点（阈值 + 下采样）--------
-p80 = np.percentile(arr, 80.0)     # 强度阈值（可调：70~90）
-step_xyz = (2, 2, 2)               # 体素步进（越小越密集）
+# ...existing code...
+p80 = np.percentile(arr, 80.0)
+step_xyz = (1, 1, 1)  # ← 改为 (1,1,1)，点更密集
+# ...existing code...
 
 ix = np.arange(0, nx, step_xyz[0])
 iy = np.arange(0, ny, step_xyz[1])

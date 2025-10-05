@@ -11,19 +11,16 @@ S = df['S'].values
 
 # === 2. convert to grid (100x100) ===
 n = int(np.sqrt(len(S)))  # should be 100
-n = int(np.sqrt(len(S)))  # should be 100
 X = x.reshape((n, n))
 Y = y.reshape((n, n))
 Z = S.reshape((n, n))
 
 # === 3. construct PyVista StructuredGrid ===
-# use Z as height to create 3D surface
 z_scale = 1.5  # Z axis scaling factor to enhance height variation
 grid = pv.StructuredGrid(X, Y, Z * z_scale)  # scale Z by 1.5
 grid["values"] = Z.flatten(order="C")  # use function values S as scalar for color mapping
 
 # === 4. process command line arguments and set contour values ===
-# check if there are command line arguments
 if len(sys.argv) > 1:
     try:
         contour_value = float(sys.argv[1])  # get contour value from command line
@@ -38,28 +35,40 @@ else:
 # === 6. visualization ===
 plotter = pv.Plotter()
 
+# ---- 优化后的 colorbar 参数 ----
+scalar_bar_args = dict(
+    title="Scalar field S(x,y)\n",   # 更清晰的标题
+    vertical=False,                # 横向放置
+    fmt="%.2f",                    # 刻度格式
+    n_labels=5,                    # 刻度数量
+    label_font_size=10,
+    title_font_size=11,
+    position_x=0.15,               # 下方左侧位置
+    position_y=0.05,               # 底部位置
+    width=0.70,                    # 横向宽度
+    height=0.04,                   # 横向高度
+)
+
 # add main surface
-plotter.add_mesh(grid, scalars="values", cmap="viridis", show_edges=False, 
-                 smooth_shading=True)  # smooth shading looks better
+plotter.add_mesh(
+    grid, scalars="values", cmap="viridis", show_edges=False,
+    smooth_shading=True, scalar_bar_args=scalar_bar_args
+)
 
 # add contour
-contours = grid.contour(isosurfaces=[contour_value])  # draw contour at specified value
-plotter.add_mesh(contours, color="red", line_width=3, 
-                 label=f"Contour at S = {contour_value}")
+contours = grid.contour(isosurfaces=[contour_value])
+plotter.add_mesh(contours, color="red", line_width=3, label=f"Contour at S = {contour_value}")
 
 plotter.add_title("2D Scalar Field: Height + Color Map + Contour Lines")
 
-# add axes - multiple ways to ensure display
-plotter.show_axes()  # basic axes
-plotter.add_axes()   # add axis labels
-plotter.show_grid()  # show grid lines
+# add axes and grid
+plotter.show_axes()   # orientation widget (小三维坐标指示器)
+plotter.add_axes()    # 外部坐标轴
+plotter.show_grid()   # 网格线与刻度
 
-# custom axis labels
-plotter.add_text("X", position='lower_left')
-plotter.add_text("Y", position='lower_right') 
-# plotter.add_text("Z (Scalar Value)", position='upper_left')
+# 删除了手动添加的 X/Y 文本，使图更简洁
 
-# add legend
-plotter.add_legend()
+# add legend (用于 contour 曲线说明)
+# plotter.add_legend()
 
 plotter.show()

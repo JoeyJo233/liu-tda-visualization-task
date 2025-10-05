@@ -68,7 +68,8 @@ actor = pl.add_volume(
     opacity=opacity_lut,   # 这会先给一个标量不透明度 LUT
     shade=True,
     mapper="gpu",
-    opacity_unit_distance=2.0  # 适当偏大一些，更平滑（可调 1~3
+    opacity_unit_distance=3,  # 适当偏大一些，更平滑（可调 1~3
+    blending='composite'  # 更锐利的边界
 )
 
 # 取到底层 mapper / property，精准控制
@@ -95,7 +96,7 @@ if hasattr(prop, "SetInterpolationTypeToLinear"):
     prop.SetInterpolationTypeToLinear()
 
 # 可选：略降采样距离以突出边界（代价是更耗性能）
-# mapper.SetSampleDistance(step * 0.8)
+mapper.SetSampleDistance(step * 0.8)
 
 pl.add_text("2D Transfer Function: Scalar × Gradient\n(梯度越高越不透明 → 边界更清楚)",
             font_size=10)
