@@ -1,6 +1,6 @@
-# Project Name
+# Solution of Scientific Visualization Tasks 
 
-Run this project in a reproducible Conda environment using the provided `environment.yml`.
+Run this project in a reproducible Conda environment using the provided `env.yml`.
 
 ---
 
@@ -13,6 +13,7 @@ Run this project in a reproducible Conda environment using the provided `environ
    ```bash
    conda env create -f env.yml --name your_custom_name
    ```
+   Note: The `--name` parameter is optional. If omitted, the environment name will default to `yizho847_SciVis` as predefined in `env.yml`.
 
 3. **Activate the environment**:
    ```bash
@@ -21,32 +22,18 @@ Run this project in a reproducible Conda environment using the provided `environ
 
 4. **Verify dependencies** (optional):
    ```bash
-   python -c "import pandas as pd; import numpy as np; import pyvista as pv; print('✅ All packages loaded!')"
+   python -c "import pandas as pd; import numpy as np; import pyvista as pv; import scipy as sp; import matplotlib as mp; print('✅ All packages loaded!')"
    ```
 
 5. **Run your code**:
    ```bash
    python your_script.py
    ```
+   Alternatively, if using VSCode: select the interpreter created above in the "Select Interpreter" settings, then use the GUI run button to execute the code.
+
+   **Note for Windows users**: In testing, it was found that when using the command line on Windows, it's best to navigate to the corresponding task folder before running Python commands. Otherwise, you may encounter issues finding `2d_scalar_field.csv`. To avoid this problem, a copy of `2d_scalar_field.csv` has been placed in the root directory as well.
 
 ---
 
-## 💡 Notes
-
-- The environment name is defined in `environment.yml` (typically `myenv` or similar).  
-- To update the environment after changes to `environment.yml`:
-  ```bash
-  conda env update -f environment.yml --prune
-  ```
-- To exit the environment:
-  ```bash
-  conda deactivate
-  ```
-
-> Compatible with Windows, macOS, and Linux.
-
-conda env create -f environment.yml
-
-```bash
-python PyV.py 1
-```
+## Note
+If you have any questions, please contact: yizho847@student.liu.se
