@@ -9,9 +9,9 @@ Run this project in a reproducible Conda environment using the provided `environ
 1. **Install Miniconda** (if not already installed):  
    https://docs.conda.io/en/latest/miniconda.html
 
-2. **Create the environment from `environment.yml`**:
+2. **Create the environment from `env.yml`**:
    ```bash
-   conda env create -f environment.yml --name your_custom_name
+   conda env create -f env.yml --name your_custom_name
    ```
 
 3. **Activate the environment**:

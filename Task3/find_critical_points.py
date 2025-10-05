@@ -58,12 +58,6 @@ from scipy import ndimage as ndi
 import numpy as np
 
 def find_critical_points(x, y, S, gradient_threshold=1e-2, det_threshold=1e-6, smooth_sigma=None):
-    """
-    在规则网格上查找临界点（critical points），并用连通域聚合去重。
-    - gradient_threshold: 判为“梯度近零”的阈值
-    - det_threshold: Hessian 判型的容差
-    - smooth_sigma: 若给定，对 S 先做高斯平滑（pixels 为单位）
-    """
     if smooth_sigma is not None and smooth_sigma > 0:
         from scipy.ndimage import gaussian_filter
         S_use = gaussian_filter(S, sigma=smooth_sigma)
@@ -72,15 +66,14 @@ def find_critical_points(x, y, S, gradient_threshold=1e-2, det_threshold=1e-6, s
 
     dS_dx, dS_dy, d2S_dx2, d2S_dy2, d2S_dxdy = compute_derivatives(x, y, S_use)
 
-    # 梯度模长（gradient magnitude）
     grad_mag = np.sqrt(dS_dx**2 + dS_dy**2)
 
-    # 候选掩膜：梯度近零，且排除边界
+
     critical_mask = (grad_mag < gradient_threshold)
     critical_mask[0, :] = critical_mask[-1, :] = False
     critical_mask[:, 0] = critical_mask[:, -1] = False
 
-    # --- 关键：连通域聚合（8邻域） ---
+    # Connected component aggregation (8-neighborhood)
     structure = np.ones((3, 3), dtype=bool)
     labels, n_comp = ndi.label(critical_mask, structure=structure)
 
@@ -88,7 +81,7 @@ def find_critical_points(x, y, S, gradient_threshold=1e-2, det_threshold=1e-6, s
 
     for lab in range(1, n_comp + 1):
         ys, xs = np.where(labels == lab)
-        # 在该连通域内挑一个代表点：梯度模长最小的像素
+        # Select a representative point in this connected component: the pixel with smallest gradient magnitude
         k = np.argmin(grad_mag[ys, xs])
         i, j = ys[k], xs[k]
 
@@ -101,7 +94,6 @@ def find_critical_points(x, y, S, gradient_threshold=1e-2, det_threshold=1e-6, s
         x_coord, y_coord, s_value = x[j], y[i], S[i, j]
 
         if det_H > det_threshold:
-            # 正定 / 负定 用迹（或最稳妥用特征值）
             if tr_H > 0:
                 minima.append((x_coord, y_coord, s_value, i, j))
             elif tr_H < 0:
@@ -117,13 +109,11 @@ def find_critical_points(x, y, S, gradient_threshold=1e-2, det_threshold=1e-6, s
         elif det_H < -det_threshold:
             saddles.append((x_coord, y_coord, s_value, i, j))
         else:
-            # det ~ 0 的不稳定点：可忽略或另行统计
             pass
 
     return minima, maxima, saddles
 
 def visualize_results(x, y, S, minima, maxima, saddles):
-    """Visualize scalar field with critical points marked."""
     X, Y = np.meshgrid(x, y)
     
     fig, ax = plt.subplots(figsize=(12, 10))
@@ -152,7 +142,7 @@ def visualize_results(x, y, S, minima, maxima, saddles):
     plt.colorbar(contour, ax=ax, label='S value')
     ax.set_xlabel('x', fontsize=12)
     ax.set_ylabel('y', fontsize=12)
-    ax.set_title('Critical Points in 2D Scalar Field', fontsize=14, fontweight='bold')
+    # ax.set_title('Critical Points in 2D Scalar Field', fontsize=14, fontweight='bold')
     ax.legend(fontsize=10, loc='upper left')
     ax.grid(True, alpha=0.3)
     ax.set_aspect('equal')
@@ -182,15 +172,8 @@ def print_results(minima, maxima, saddles):
 
 # Main execution
 if __name__ == "__main__":
-    # Load data
     x, y, S = load_and_prepare_data('2d_scalar_field.csv')
     print(f"Grid: {len(x)} x {len(y)}, S range: [{S.min():.4f}, {S.max():.4f}]")
-    
-    # Find critical points
     minima, maxima, saddles = find_critical_points(x, y, S, gradient_threshold=0.08, det_threshold=1e-7)
-    
-    # Print results
     print_results(minima, maxima, saddles)
-    
-    # Visualize
     visualize_results(x, y, S, minima, maxima, saddles)
