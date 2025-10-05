@@ -57,7 +57,6 @@ def print_data_info(x, y, S, target_isovalue):
     print(f"\nGrid: {len(x)} × {len(y)}, S range: [{S.min():.6f}, {S.max():.6f}]")
     print(f"Target isovalue: S = {target_isovalue:.6f}")
     
-    # Check if target isovalue is within data range
     if target_isovalue < S.min():
         print(f"Warning: Target value below S_min, isocontour will NOT appear")
     elif target_isovalue > S.max():
@@ -65,20 +64,15 @@ def print_data_info(x, y, S, target_isovalue):
 
 # Main execution
 if __name__ == "__main__":
-    # Parse command line argument for target isovalue
-    target_isovalue = 0.0  # Default value
+
+    target_isovalue = 0.0  
     if len(sys.argv) > 1:
         try:
             target_isovalue = float(sys.argv[1])
         except ValueError:
             print(f"Invalid isovalue '{sys.argv[1]}'. Using default: 0.0")
             target_isovalue = 0.0
-    
-    # Load data
+
     x, y, S = load_and_prepare_data('2d_scalar_field.csv')
-    
-    # Print data information
     print_data_info(x, y, S, target_isovalue)
-    
-    # Visualize isocontour
     visualize_isocontour(x, y, S, target_isovalue=target_isovalue)
